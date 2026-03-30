@@ -4,21 +4,27 @@ const canvas = document.getElementById('scene');
 const ctx = canvas.getContext('2d');
 
 const copy = {
-  flagship: `A craft of pure intention tears across the page. 서울 glows in its wake, القاهرة bends like a ribbon of signal, 東京 fractures into rails of light, and the paragraph refuses to collapse. Instead it computes itself again. Pretext turns language into a navigable medium: line by line, width by width, geometry in motion. This is not text reacting after the fact. This is text composed inside the event itself, as if the page had propulsion and the sentence understood turbulence.`,
-  velocity: `The scene behaves like a title sequence for a product that does not exist yet but already feels inevitable. Every pass of the vehicle splits the editorial column, compresses one side, releases the other, and leaves behind a luminous corridor. English becomes plasma, 한국어 becomes precision, العربية becomes curvature, 日本語 becomes signal. The effect is not that text is animated; it is that layout itself becomes cinematic matter.`,
-  future: `A programmable paragraph engine changes what interfaces can feel like. Imagine dashboards where commentary avoids live charts, AI canvases that preflow copy around generative objects before paint, identity systems where the headline moves as if it shares the same physics as the brand world. Pretext supplies the missing primitive: deterministic multiline layout that can route through changing space without waiting for the DOM to tell you what happened.`
+  flagship: `Pretext gives software a missing primitive: deterministic multiline layout before paint. No DOM reads. No layout thrash. Just predictable text flow through changing geometry. A moving object enters the scene; the paragraph recomputes instantly. A chart expands; annotation avoids it. A generated image lands; copy routes around it. The interface stays legible because layout is decided, not discovered after render.`,
+  velocity: `For AI products, editors, canvases, dashboards, and brand surfaces, this changes the interaction model. Text no longer waits for the browser to measure what already happened. It becomes programmable. Each line can take a different width. Each frame can respect a different obstacle. Each renderer can stay in control. That means faster previews, richer motion, and interfaces that feel composed instead of patched together.`,
+  future: `This demo is the thesis in motion. A single paragraph is prepared once, then continuously re-routed around live geometry with layoutNextLine(). The spectacle matters, but the business case is clearer: better text systems for creative tools, design software, generative UI, immersive publishing, and data storytelling. The visual is the hook. The real product is a new engine for text.`
 };
 
 const presets = [
-  { id: 'interceptor', label: 'Interceptor', key: 'flagship' },
-  { id: 'slipstream', label: 'Slipstream', key: 'velocity' },
-  { id: 'cathedral', label: 'Neon Cathedral', key: 'future' },
+  { id: 'interceptor', label: 'Investor Reveal', key: 'flagship' },
+  { id: 'slipstream', label: 'AI Interface', key: 'velocity' },
+  { id: 'cathedral', label: 'Brand System', key: 'future' },
 ];
 
 const descriptions = {
-  interceptor: '초고속 에너지 크래프트가 문단을 가르며 지나갑니다.',
-  slipstream: '복수의 충격파와 트레일이 라인 분할을 연쇄적으로 유도합니다.',
-  cathedral: '거대한 빛의 구조물 사이로 텍스트가 건축적으로 재배치됩니다.',
+  interceptor: '움직이는 오브젝트를 피해 문단이 즉시 재계산됩니다.',
+  slipstream: '가변 폭 라우팅이 AI UI와 캔버스 인터페이스를 상정합니다.',
+  cathedral: '브랜드·에디토리얼 환경에서의 공간형 타이포그래피를 시연합니다.',
+};
+
+const sceneNotes = {
+  interceptor: ['No DOM reads', 'Deterministic lines', 'Realtime geometry'],
+  slipstream: ['AI canvas', 'Live charts & widgets', 'Predictive layout'],
+  cathedral: ['Brand motion', 'Editorial systems', 'Immersive publishing'],
 };
 
 const fontFamily = 'Georgia, "Iowan Old Style", "Times New Roman", serif';
@@ -47,6 +53,7 @@ const controls = {
   chips: Array.from(document.querySelectorAll('[data-preset]')),
   auto: document.getElementById('toggle-autoplay'),
   metrics: document.getElementById('metrics'),
+  notes: document.getElementById('scene-notes'),
 };
 
 function clamp(value, min, max) {
@@ -81,6 +88,7 @@ function setPreset(index) {
   controls.chips.forEach((chip, chipIndex) => {
     chip.dataset.active = chipIndex === state.presetIndex ? 'true' : 'false';
   });
+  controls.notes.innerHTML = sceneNotes[preset.id].map(note => `<li>${note}</li>`).join('');
 }
 
 function getDriver(time) {
@@ -108,21 +116,16 @@ function buildCraftSegments(headX, headY, angle, count, spacing, taper) {
 function getScene(time) {
   const driver = getDriver(time);
   const preset = presets[state.presetIndex].id;
-  const craftAngle = Math.atan2(
-    Math.cos(time * 0.0011) * 0.55 + (state.pointerActive ? driver.y - state.height * 0.5 : 0),
-    Math.sin(time * 0.00084) * 0.85 + state.width * 0.1,
-  );
 
   if (preset === 'interceptor') {
     const headX = state.pointerActive ? driver.x : (time * 0.42) % (state.width + 280) - 140;
     const headY = state.pointerActive ? driver.y : state.height * 0.48 + Math.sin(time * 0.0011) * state.height * 0.16;
-    const segments = buildCraftSegments(headX, headY, 0.1 + Math.sin(time * 0.0012) * 0.18, 11, 32, [42, 12]);
+    const angle = 0.08 + Math.sin(time * 0.0012) * 0.18;
+    const segments = buildCraftSegments(headX, headY, angle, 11, 32, [42, 12]);
     return {
-      craft: { x: headX, y: headY, angle: 0.08 + Math.sin(time * 0.0012) * 0.18, length: 340, width: 90, hue: 196 },
+      craft: { x: headX, y: headY, angle, length: 340, width: 90, hue: 196 },
       segments,
-      shockwaves: [
-        { x: headX - 130, y: headY, r: 70 + (time * 0.08) % 80, alpha: 0.13 },
-      ],
+      shockwaves: [{ x: headX - 130, y: headY, r: 70 + (time * 0.08) % 80, alpha: 0.13 }],
       lanes: [],
     };
   }
@@ -214,11 +217,8 @@ function getBestSegment(y, scene, left, right) {
   const valid = segments.filter(segment => segment.width >= 92);
   if (!valid.length) return null;
 
-  valid.sort((a, b) => b.width - a.width);
   const center = state.width * 0.5;
   valid.sort((a, b) => {
-    const scoreA = b.width === a.width ? 0 : 0;
-    void scoreA;
     const midA = a.x + a.width * 0.5;
     const midB = b.x + b.width * 0.5;
     const weightA = a.width - Math.abs(midA - center) * 0.12;
@@ -353,10 +353,10 @@ function drawCraft(scene) {
 
 function drawParagraph(time, scene) {
   const prepared = preparedByKey[presets[state.presetIndex].key];
-  const top = Math.max(148, state.height * 0.18);
-  const left = Math.max(58, state.width * 0.08);
-  const right = state.width - Math.max(58, state.width * 0.08);
-  const bottom = state.height - 82;
+  const top = Math.max(166, state.height * 0.22);
+  const left = Math.max(64, state.width * 0.09);
+  const right = state.width - Math.max(64, state.width * 0.09);
+  const bottom = state.height - 94;
 
   ctx.font = paragraphFont;
   ctx.textBaseline = 'alphabetic';
@@ -389,17 +389,17 @@ function drawParagraph(time, scene) {
       return sum + Math.max(0, 1 - d / (wave.r * 1.8));
     }, 0);
 
-    const hue = 195 + Math.sin(time * 0.001 + lineIndex * 0.26) * 18 + waveEnergy * 40;
-    const lightness = clamp(90 - nearest * 0.038 + waveEnergy * 6, 72, 95);
+    const hue = 198 + Math.sin(time * 0.001 + lineIndex * 0.26) * 14 + waveEnergy * 36;
+    const lightness = clamp(90 - nearest * 0.038 + waveEnergy * 6, 74, 96);
     const drift = Math.sin(time * 0.0022 + lineIndex * 0.72) * Math.min(8, waveEnergy * 8 + 2);
 
     ctx.fillStyle = `hsl(${hue} 92% ${lightness}%)`;
     ctx.fillText(line.text, slot.x + drift, y);
 
     const highlight = ctx.createLinearGradient(slot.x, y - 18, slot.x + line.width, y + 4);
-    highlight.addColorStop(0, `rgba(113,226,255,${0.14 + waveEnergy * 0.12})`);
-    highlight.addColorStop(0.5, `rgba(255,255,255,${0.04 + waveEnergy * 0.08})`);
-    highlight.addColorStop(1, `rgba(207,108,255,${0.02 + waveEnergy * 0.10})`);
+    highlight.addColorStop(0, `rgba(113,226,255,${0.12 + waveEnergy * 0.10})`);
+    highlight.addColorStop(0.5, `rgba(255,255,255,${0.03 + waveEnergy * 0.06})`);
+    highlight.addColorStop(1, `rgba(207,108,255,${0.02 + waveEnergy * 0.08})`);
     ctx.fillStyle = highlight;
     ctx.fillRect(slot.x, y - lineHeight + 8, line.width, lineHeight + 6);
 
@@ -411,13 +411,13 @@ function drawParagraph(time, scene) {
 
   state.metrics.lines = lineIndex;
   state.metrics.coverage = Math.round(coverage);
-  controls.metrics.textContent = `${state.metrics.mode} · ${state.metrics.lines} lines · ${state.metrics.coverage}px flow`;
+  controls.metrics.textContent = `${state.metrics.mode} · ${state.metrics.lines} lines reflowed · ${state.metrics.coverage}px routed`;
 }
 
 function frame(time) {
   state.time = time;
   if (state.autoplay && !state.pointerActive) {
-    const cycle = Math.floor(time / 8000) % presets.length;
+    const cycle = Math.floor(time / 9000) % presets.length;
     if (cycle !== state.presetIndex) setPreset(cycle);
   }
 
