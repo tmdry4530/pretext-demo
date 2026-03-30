@@ -3,18 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pretext Demo — Event Horizon Typography</title>
+    <title>Pretext Demo — Cinematic Spatial Typography</title>
     <style>
       :root {
         color-scheme: dark;
         --bg: #060816;
         --panel: rgba(8, 12, 26, 0.62);
-        --panel-strong: rgba(10, 14, 30, 0.84);
         --line: rgba(255, 255, 255, 0.1);
         --text: #eef3ff;
         --muted: #9aa7c7;
         --accent: #82d4ff;
-        --accent2: #d28aff;
       }
       * { box-sizing: border-box; }
       html, body {
@@ -48,11 +46,11 @@
         position: absolute;
         top: 18px;
         left: 18px;
-        width: min(520px, calc(100vw - 36px));
+        width: min(560px, calc(100vw - 36px));
         padding: 18px 18px 16px;
         border: 1px solid var(--line);
         border-radius: 20px;
-        background: linear-gradient(180deg, rgba(16, 22, 43, 0.78), rgba(8, 12, 26, 0.62));
+        background: linear-gradient(180deg, rgba(14, 19, 39, 0.82), rgba(8, 12, 26, 0.58));
         backdrop-filter: blur(18px);
         box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
       }
@@ -66,7 +64,7 @@
       }
       h1 {
         margin: 0;
-        font-size: clamp(30px, 4.3vw, 52px);
+        font-size: clamp(30px, 4.3vw, 54px);
         line-height: 0.94;
         letter-spacing: -0.05em;
       }
@@ -101,7 +99,7 @@
         position: absolute;
         right: 18px;
         top: 18px;
-        width: min(320px, calc(100vw - 36px));
+        width: min(340px, calc(100vw - 36px));
         padding: 16px;
         border: 1px solid var(--line);
         border-radius: 18px;
@@ -111,7 +109,7 @@
       }
       .panel h2 {
         margin: 0 0 8px;
-        font-size: 22px;
+        font-size: 24px;
         letter-spacing: -0.03em;
       }
       .panel p {
@@ -150,7 +148,7 @@
         border-radius: 999px;
         background: rgba(255,255,255,0.04);
         border: 1px solid rgba(255,255,255,0.08);
-        color: rgba(255,255,255,0.7);
+        color: rgba(255,255,255,0.72);
         font-size: 11px;
         letter-spacing: 0.12em;
         text-transform: uppercase;
@@ -187,31 +185,31 @@
       <canvas id="scene"></canvas>
 
       <section class="hud">
-        <p class="kicker">Pretext / Spatial Layout Engine Demo</p>
-        <h1>Event Horizon Typography++</h1>
+        <p class="kicker">Pretext / Cinematic Showcase</p>
+        <h1>Velocity Fields for Language</h1>
         <p class="lede">
-          DOM 측정 없이, 문단을 <strong>라인 단위</strong>로 다시 계산합니다. 움직이는 질량장과 가변 폭 채널을 따라
-          텍스트가 즉시 재배치되며, Pretext의 <code>prepareWithSegments()</code> + <code>layoutNextLine()</code>
-          조합이 단순 줄바꿈이 아니라 <strong>공간 반응형 타이포그래피 엔진</strong>임을 보여줍니다.
+          움직이는 오브젝트와 충격파, 건축적 채널을 따라 문단이 실시간으로 갈라지고 다시 봉합됩니다.
+          이 데모는 Pretext가 단순 줄바꿈 라이브러리가 아니라, <strong>공간과 사건에 반응하는 레이아웃 엔진</strong>이라는 점을
+          시네마틱하게 보여주기 위한 쇼케이스입니다.
         </p>
         <div class="controls">
-          <button class="chip" data-preset="0" data-active="true">Singularity</button>
-          <button class="chip" data-preset="1">Binary Stars</button>
-          <button class="chip" data-preset="2">Wormhole</button>
+          <button class="chip" data-preset="0" data-active="true">Interceptor</button>
+          <button class="chip" data-preset="1">Slipstream</button>
+          <button class="chip" data-preset="2">Neon Cathedral</button>
           <button class="chip" id="toggle-autoplay" data-active="true">Autoplay On</button>
         </div>
       </section>
 
       <aside class="panel">
-        <h2 id="preset-title">Singularity</h2>
-        <p id="preset-desc">단일 중력원 주변으로 문단이 굽어 흐릅니다.</p>
+        <h2 id="preset-title">Interceptor</h2>
+        <p id="preset-desc">초고속 에너지 크래프트가 문단을 가르며 지나갑니다.</p>
       </aside>
 
-      <div class="signature">Canvas-native · multilingual · zero DOM reads</div>
+      <div class="signature">real-time multiline routing · canvas-native · zero DOM reads</div>
 
       <div class="footer">
-        <div class="legend"><strong>Move pointer</strong> to steer the field · <strong>← →</strong> switch presets · <strong>Space</strong> autoplay</div>
-        <div class="metrics" id="metrics">Singularity · 0 lines · 0px flow</div>
+        <div class="legend"><strong>Move pointer</strong> to steer the scene · <strong>← →</strong> switch presets · <strong>Space</strong> autoplay</div>
+        <div class="metrics" id="metrics">Interceptor · 0 lines · 0px flow</div>
       </div>
     </div>
     <script type="module" src="./main.js"></script>

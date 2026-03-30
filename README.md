@@ -1,58 +1,51 @@
-# Pretext Demo — Event Horizon Typography++
+# Pretext Demo — Velocity Fields for Language
 
-A showcase demo for [`@chenglou/pretext`](https://github.com/chenglou/pretext) that treats text layout as a programmable spatial system rather than a fixed DOM box.
+A cinematic showcase for [`@chenglou/pretext`](https://github.com/chenglou/pretext) built to feel less like a utility demo and more like a high-end interactive title sequence.
 
-## What changed
+## What it is
 
-This upgraded version pushes the original idea into a more presentation-worthy direction:
+This version turns the page into a spatial field where moving objects, shockwaves, and architectural channels continuously force a paragraph to recompute itself.
 
-- **three cinematic layout presets**
-  - `Singularity`
-  - `Binary Stars`
-  - `Wormhole`
-- **multilingual editorial copy** prepared once and re-laid out continuously
-- **canvas-native visual system** with particles, glow fields, and reactive highlights
-- **line-by-line geometry routing** driven by Pretext's `layoutNextLine()`
-- **interactive HUD** for switching modes and autoplaying the scene
+Instead of asking the DOM what happened after render, the layout is determined proactively with Pretext:
 
-## Why this demo matters
+- prepare text once
+- compute the available width for each next line
+- route the paragraph around moving geometry
+- render the result directly to canvas
 
-Most typography demos show that text wraps correctly.
+## Showcase modes
 
-This one shows something more ambitious:
+- **Interceptor** — a high-speed energy craft slices through the paragraph
+- **Slipstream** — orbital motion and stacked shockwaves create cascading splits
+- **Neon Cathedral** — luminous structural lanes carve the text into architectural columns
 
-> Pretext can act like a real-time paragraph engine that routes language through changing geometry.
+## Why this is stronger
 
-That means you can build experiences where text is not just placed after render, but actively computed as part of the scene:
+The previous iteration proved that text could bend around geometry.
 
-- AI-native editors
-- responsive data storytelling
-- canvas/SVG interfaces
-- text wrapping around live objects
-- immersive brand or product sites
+This iteration aims for something more ambitious:
 
-## Core technical idea
+> make Pretext look like the core engine behind a cinematic, product-grade, spatial typography system.
 
-The key flow is:
+It is designed to be:
+
+- more memorable in screenshots and video captures
+- more legible as a product/engine demo
+- closer in feel to creative-coding and premium landing-page references
+
+## Technical core
+
+The important flow remains the same:
 
 1. `prepareWithSegments(text, font)` once
-2. for each frame, compute which horizontal spans are blocked by spatial fields
-3. derive the best available segment for the next line
+2. compute blocked horizontal intervals from moving objects and scene structures
+3. derive the best available segment for the current line
 4. call `layoutNextLine(prepared, cursor, availableWidth)`
-5. draw the line, then continue until the paragraph is exhausted
+5. render the line and continue
 
-This makes the layout:
+That means the spectacle is still powered by the same key idea:
 
-- **predictable**
-- **renderer-independent**
-- **fast enough for motion graphics**
-- **not dependent on DOM measurement loops**
-
-## Files
-
-- `index.html` — HUD, controls, and presentation shell
-- `main.js` — field simulation, geometry routing, and canvas rendering
-- `package.json` — minimal Vite runner
+**deterministic multiline layout through changing space.**
 
 ## Run locally
 
@@ -71,13 +64,7 @@ npm run preview
 
 ## Controls
 
-- move pointer: steer the active field
-- `←` / `→`: switch presets
+- move pointer: steer the active scene
+- `←` / `→`: switch modes
 - `Space`: toggle autoplay
-- buttons in the HUD: manually choose scenes
-
-## Positioning
-
-If you want to pitch Pretext to engineers, designers, founders, or investors, this demo positions it as:
-
-**not a helper for text measurement, but a programmable engine for spatial typography.**
+- HUD buttons: jump directly to a preset
