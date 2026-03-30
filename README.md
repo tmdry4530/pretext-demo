@@ -1,57 +1,58 @@
-# Pretext Demo — Event Horizon Typography
+# Pretext Demo — Event Horizon Typography++
 
-A visually striking demo built on top of [`@chenglou/pretext`](https://github.com/chenglou/pretext).
+A showcase demo for [`@chenglou/pretext`](https://github.com/chenglou/pretext) that treats text layout as a programmable spatial system rather than a fixed DOM box.
 
-## Concept
+## What changed
 
-**Event Horizon Typography** turns Pretext's multiline layout engine into a motion graphic.
+This upgraded version pushes the original idea into a more presentation-worthy direction:
 
-A single multilingual paragraph is measured once with Pretext, then re-laid out every frame so each line can have a **different usable width**. The text appears to bend around a moving black-hole-like singularity. This shows off one of Pretext's most interesting capabilities:
+- **three cinematic layout presets**
+  - `Singularity`
+  - `Binary Stars`
+  - `Wormhole`
+- **multilingual editorial copy** prepared once and re-laid out continuously
+- **canvas-native visual system** with particles, glow fields, and reactive highlights
+- **line-by-line geometry routing** driven by Pretext's `layoutNextLine()`
+- **interactive HUD** for switching modes and autoplaying the scene
 
-- not just measuring paragraph height
-- not just wrapping text at a fixed width
-- but **routing text line-by-line through changing geometry**
+## Why this demo matters
 
-That is the core novelty here.
+Most typography demos show that text wraps correctly.
 
-## Why this is a good demo for Pretext
+This one shows something more ambitious:
 
-Most text demos prove correctness. This one proves **expressiveness**.
+> Pretext can act like a real-time paragraph engine that routes language through changing geometry.
 
-Pretext's standout API for this is `layoutNextLine()`. It lets us ask:
+That means you can build experiences where text is not just placed after render, but actively computed as part of the scene:
 
-> Given the current cursor in the paragraph, and a width for *this one line*, what is the next line?
+- AI-native editors
+- responsive data storytelling
+- canvas/SVG interfaces
+- text wrapping around live objects
+- immersive brand or product sites
 
-That makes it possible to create layouts that are hard or awkward in normal DOM/CSS:
+## Core technical idea
 
-- text wrapping around shapes
-- dynamic editorial layouts
-- responsive canvas typography
-- text flowing around animated objects
+The key flow is:
 
-This demo is intentionally narrow and bold: one idea, rendered clearly.
+1. `prepareWithSegments(text, font)` once
+2. for each frame, compute which horizontal spans are blocked by spatial fields
+3. derive the best available segment for the next line
+4. call `layoutNextLine(prepared, cursor, availableWidth)`
+5. draw the line, then continue until the paragraph is exhausted
 
-## Fastest credible path I chose
+This makes the layout:
 
-After inspecting the repo, the fastest trustworthy route to a runnable standalone demo was:
-
-1. use the published npm package `@chenglou/pretext`
-2. create a tiny Vite app in this workspace
-3. render to a single `<canvas>`
-4. use `prepareWithSegments()` + `layoutNextLine()` for the core effect
-
-Why this path:
-
-- minimal setup friction
-- no need to fork the original repo or its Bun devserver
-- easy to run locally with standard Node/npm tooling
-- keeps the demo focused on Pretext itself
+- **predictable**
+- **renderer-independent**
+- **fast enough for motion graphics**
+- **not dependent on DOM measurement loops**
 
 ## Files
 
-- `index.html` — shell + HUD
-- `main.js` — canvas rendering and Pretext layout logic
-- `package.json` — minimal local runner
+- `index.html` — HUD, controls, and presentation shell
+- `main.js` — field simulation, geometry routing, and canvas rendering
+- `package.json` — minimal Vite runner
 
 ## Run locally
 
@@ -61,10 +62,6 @@ npm install
 npm run dev
 ```
 
-Then open the local Vite URL, usually:
-
-- `http://localhost:5173`
-
 ## Build
 
 ```bash
@@ -72,33 +69,15 @@ npm run build
 npm run preview
 ```
 
-## Interaction
+## Controls
 
-- Move the mouse or trackpad pointer to steer the gravity well
-- Resize the window to see the paragraph reflow instantly
+- move pointer: steer the active field
+- `←` / `→`: switch presets
+- `Space`: toggle autoplay
+- buttons in the HUD: manually choose scenes
 
-## Technical note
+## Positioning
 
-The important Pretext flow is:
+If you want to pitch Pretext to engineers, designers, founders, or investors, this demo positions it as:
 
-1. `prepareWithSegments(text, font)` once
-2. on every frame, compute the available width for the next line based on where the black hole cuts into the paragraph region
-3. call `layoutNextLine(prepared, cursor, availableWidth)`
-4. draw that returned line to canvas
-5. continue until the paragraph is exhausted
-
-That means the expensive text analysis is front-loaded, while frame-by-frame layout stays lightweight and geometric.
-
-## What makes it novel
-
-This is not a generic “text wraps around a circle” demo.
-
-The novelty is the combination of:
-
-- **animated geometry**
-- **multilingual paragraph content**
-- **canvas-native rendering**
-- **no DOM measurement loop**
-- **line-by-line adaptive layout as the visual effect itself**
-
-It presents Pretext less as a utility and more as a **creative layout engine**.
+**not a helper for text measurement, but a programmable engine for spatial typography.**
