@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pretext Demo — Layout Engine for Moving Interfaces</title>
+    <title>Pretext — Deterministic Layout Before Paint</title>
     <style>
       :root {
         color-scheme: dark;
-        --bg: #060816;
-        --panel: rgba(8, 12, 26, 0.68);
-        --line: rgba(255, 255, 255, 0.1);
+        --bg: #050816;
         --text: #eef3ff;
-        --muted: #9aa7c7;
-        --accent: #82d4ff;
+        --muted: #9daac8;
+        --line: rgba(255,255,255,0.08);
+        --panel: rgba(8, 12, 26, 0.54);
+        --accent: #87dfff;
       }
       * { box-sizing: border-box; }
       html, body {
@@ -23,17 +23,11 @@
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
       body { overflow: hidden; }
-      button, code { font: inherit; }
       #app {
         position: relative;
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        background:
-          radial-gradient(circle at 20% 20%, rgba(87, 144, 255, 0.16), transparent 22%),
-          radial-gradient(circle at 80% 12%, rgba(197, 124, 255, 0.12), transparent 26%),
-          radial-gradient(circle at 50% 80%, rgba(72, 255, 199, 0.05), transparent 30%),
-          #060816;
       }
       canvas {
         position: absolute;
@@ -42,20 +36,15 @@
         height: 100%;
         display: block;
       }
-      .hud {
+      .hero {
         position: absolute;
-        top: 18px;
-        left: 18px;
-        width: min(620px, calc(100vw - 36px));
-        padding: 20px 20px 18px;
-        border: 1px solid var(--line);
-        border-radius: 22px;
-        background: linear-gradient(180deg, rgba(14, 19, 39, 0.86), rgba(8, 12, 26, 0.62));
-        backdrop-filter: blur(18px);
-        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+        top: 26px;
+        left: 28px;
+        width: min(500px, calc(100vw - 56px));
+        z-index: 2;
       }
-      .kicker {
-        margin: 0 0 8px;
+      .eyebrow {
+        margin: 0 0 10px;
         color: var(--accent);
         font-size: 12px;
         font-weight: 700;
@@ -64,67 +53,44 @@
       }
       h1 {
         margin: 0;
-        font-size: clamp(30px, 4.4vw, 58px);
-        line-height: 0.95;
-        letter-spacing: -0.05em;
-        max-width: 11ch;
+        font-size: clamp(42px, 5.2vw, 86px);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+        max-width: 8ch;
       }
-      .lede {
-        margin: 14px 0 16px;
+      .sub {
+        margin: 16px 0 0;
+        max-width: 50ch;
         color: var(--muted);
         font-size: 15px;
-        line-height: 1.65;
-        max-width: 58ch;
+        line-height: 1.62;
       }
-      .proof {
+      .chips {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        margin-bottom: 14px;
-      }
-      .proof span {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 11px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.09);
-        background: rgba(255,255,255,0.04);
-        color: rgba(255,255,255,0.84);
-        font-size: 12px;
-      }
-      .controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
+        margin-top: 18px;
       }
       .chip {
-        appearance: none;
-        border: 1px solid rgba(255,255,255,0.12);
-        background: rgba(255,255,255,0.05);
-        color: var(--text);
+        padding: 9px 12px;
         border-radius: 999px;
-        padding: 9px 13px;
-        cursor: pointer;
-        transition: 160ms ease;
-      }
-      .chip:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
-      .chip[data-active="true"] {
-        background: linear-gradient(90deg, rgba(130, 212, 255, 0.18), rgba(210, 138, 255, 0.18));
-        border-color: rgba(130, 212, 255, 0.38);
-        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.86);
+        font-size: 12px;
       }
       .panel {
         position: absolute;
-        right: 18px;
-        top: 18px;
-        width: min(360px, calc(100vw - 36px));
-        padding: 18px;
+        right: 28px;
+        top: 28px;
+        width: 300px;
+        padding: 16px 18px;
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 18px;
         background: var(--panel);
         backdrop-filter: blur(18px);
-        box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+        z-index: 2;
       }
       .panel-label {
         margin: 0 0 8px;
@@ -136,81 +102,60 @@
       }
       .panel h2 {
         margin: 0 0 8px;
-        font-size: 26px;
-        letter-spacing: -0.03em;
+        font-size: 28px;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
       }
       .panel p {
-        margin: 0 0 12px;
+        margin: 0;
         color: var(--muted);
         font-size: 13px;
         line-height: 1.6;
       }
-      .panel ul {
-        margin: 0;
-        padding-left: 18px;
-        color: rgba(255,255,255,0.88);
-        font-size: 13px;
-        line-height: 1.7;
-      }
       .footer {
         position: absolute;
-        left: 18px;
-        right: 18px;
-        bottom: 18px;
+        left: 28px;
+        right: 28px;
+        bottom: 24px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 12px;
+        z-index: 2;
       }
-      .legend,
-      .metrics {
-        padding: 12px 14px;
-        border: 1px solid var(--line);
+      .legend, .metrics {
+        padding: 11px 14px;
         border-radius: 14px;
-        background: rgba(8, 12, 26, 0.56);
+        border: 1px solid var(--line);
+        background: rgba(8, 12, 26, 0.48);
+        backdrop-filter: blur(12px);
         color: var(--muted);
         font-size: 12px;
-        backdrop-filter: blur(14px);
       }
-      .legend strong,
-      .metrics strong { color: var(--text); }
+      .legend strong, .metrics strong { color: var(--text); }
       .signature {
         position: absolute;
-        right: 22px;
-        bottom: 88px;
+        right: 28px;
+        bottom: 78px;
         padding: 8px 10px;
         border-radius: 999px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: rgba(255,255,255,0.72);
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.03);
+        color: rgba(255,255,255,0.7);
         font-size: 11px;
         letter-spacing: 0.12em;
         text-transform: uppercase;
+        z-index: 2;
       }
-      @media (max-width: 920px) {
-        .panel {
-          top: auto;
-          right: 12px;
-          bottom: 74px;
-          width: min(420px, calc(100vw - 24px));
-        }
-        .hud {
-          top: 12px;
-          left: 12px;
-          width: calc(100vw - 24px);
-        }
-        .footer {
-          left: 12px;
-          right: 12px;
-          bottom: 12px;
-          flex-direction: column;
-          align-items: stretch;
-        }
-        .signature { display: none; }
-      }
-      @media (max-width: 620px) {
+      @media (max-width: 900px) {
         .panel { display: none; }
-        .lede { font-size: 14px; }
+      }
+      @media (max-width: 640px) {
+        .hero { top: 18px; left: 18px; width: calc(100vw - 36px); }
+        .footer { left: 18px; right: 18px; bottom: 18px; flex-direction: column; align-items: stretch; }
+        .signature { display: none; }
+        h1 { font-size: clamp(36px, 12vw, 64px); }
+        .sub { font-size: 14px; }
       }
     </style>
   </head>
@@ -218,42 +163,33 @@
     <div id="app">
       <canvas id="scene"></canvas>
 
-      <section class="hud">
-        <p class="kicker">Pretext / Product Thesis Demo</p>
-        <h1>Layout engine for moving interfaces.</h1>
-        <p class="lede">
-          Pretext computes multiline text <strong>before paint</strong>, so interfaces can route language around moving geometry without DOM reads.
-          This demo shows the thesis visually: when the scene changes, the paragraph does not break — it <strong>recomputes</strong>.
+      <section class="hero">
+        <p class="eyebrow">Pretext / Investor-grade showcase</p>
+        <h1>Deterministic layout before paint.</h1>
+        <p class="sub">
+          A premium demo for a simple thesis: when interfaces move, text should recompute — not break. Pretext lets software route multiline copy around live geometry without a DOM measurement loop.
         </p>
-        <div class="proof">
-          <span>Zero DOM measurement loop</span>
-          <span>Realtime line-by-line routing</span>
-          <span>Canvas / SVG / custom renderers</span>
-        </div>
-        <div class="controls">
-          <button class="chip" data-preset="0" data-active="true">Investor Reveal</button>
-          <button class="chip" data-preset="1">AI Interface</button>
-          <button class="chip" data-preset="2">Brand System</button>
-          <button class="chip" id="toggle-autoplay" data-active="true">Autoplay On</button>
+        <div class="chips">
+          <div class="chip">No DOM reads</div>
+          <div class="chip">Realtime line routing</div>
+          <div class="chip">Canvas / SVG / custom renderers</div>
         </div>
       </section>
 
       <aside class="panel">
-        <p class="panel-label">Use case framing</p>
-        <h2 id="preset-title">Investor Reveal</h2>
-        <p id="preset-desc">움직이는 오브젝트를 피해 문단이 즉시 재계산됩니다.</p>
-        <ul id="scene-notes">
-          <li>No DOM reads</li>
-          <li>Deterministic lines</li>
-          <li>Realtime geometry</li>
-        </ul>
+        <p class="panel-label">Why it matters</p>
+        <h2>AI tools. Editors. Brand systems.</h2>
+        <p>
+          The visual effect is the hook. The product value is a new text primitive for interfaces that contain motion,
+          generated media, charts, and non-DOM rendering.
+        </p>
       </aside>
 
-      <div class="signature">deterministic multiline layout · renderer independent · pitch-ready demo</div>
+      <div class="signature">prepared once · routed line-by-line · pointer reactive</div>
 
       <div class="footer">
-        <div class="legend"><strong>Move pointer</strong> to steer the scene · <strong>← →</strong> switch modes · <strong>Space</strong> autoplay</div>
-        <div class="metrics" id="metrics">Investor Reveal · 0 lines reflowed · 0px routed</div>
+        <div class="legend"><strong>Move pointer</strong> to steer the geometry field</div>
+        <div class="metrics" id="metrics">0 lines reflowed · 0px routed · pointer-reactive geometry</div>
       </div>
     </div>
     <script type="module" src="./main.js"></script>
